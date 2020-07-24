@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Selectable : MonoBehaviour {
-    public Renderer[] renderers; //Assign all child Mesh Renderers
+    public Renderer[] renderers; // Assign all child Mesh Renderers
 
     public Bounds GetObjectBounds() {
         Bounds totalBounds = new Bounds();
@@ -11,8 +11,7 @@ public class Selectable : MonoBehaviour {
         for (int i = 0; i < renderers.Length; i++) {
             if (totalBounds.center == Vector3.zero) {
                 totalBounds = renderers[i].bounds;
-            }
-            else {
+            } else {
                 totalBounds.Encapsulate(renderers[i].bounds);
             }
         }
@@ -20,14 +19,14 @@ public class Selectable : MonoBehaviour {
     }
 
     void OnEnable() {
-        //Add this Object to global list
+        // Add this object to the selectable object list
         if (!SelectionManager.selectables.Contains(this)) {
             SelectionManager.selectables.Add(this);
         }
     }
 
     void OnDisable() {
-        //Remove this Object from global list
+        // Remove this object from the selectable object list
         if (SelectionManager.selectables.Contains(this)) {
             SelectionManager.selectables.Remove(this);
         }

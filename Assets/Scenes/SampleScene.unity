@@ -227,7 +227,6 @@ GameObject:
   - component: {fileID: 57717665}
   - component: {fileID: 57717664}
   - component: {fileID: 57717669}
-  - component: {fileID: 57717668}
   - component: {fileID: 57717670}
   m_Layer: 0
   m_Name: Unit
@@ -311,18 +310,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &57717668
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 57717663}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 036a20ac4d7990845b1575feb259137a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!195 &57717669
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1539,11 +1526,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 957566352}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ca737a5916c35b40b11120c65357f18, type: 3}
+  m_Script: {fileID: 11500000, guid: 937b689eb2f340e0a438b8c65c2e0915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  topLeftBorder: {fileID: 2800000, guid: 78848f2468b24e941a74ed8bd086f1b1, type: 3}
+  bottomLeftBorder: {fileID: 2800000, guid: de6dded5f98396442ac1afc983779bdc, type: 3}
+  topRightBorder: {fileID: 2800000, guid: 3edb4052b4c0f944a9c5eadaa96e9bf0, type: 3}
+  bottomRightBorder: {fileID: 2800000, guid: 07ad1c6a8b0cee54f9468f51c035b8c5, type: 3}
 --- !u!4 &957566354
 Transform:
   m_ObjectHideFlags: 0
@@ -1570,10 +1561,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59d1d98c802f9c54f8ad5baa7828314d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topLeftBorder: {fileID: 2800000, guid: 78848f2468b24e941a74ed8bd086f1b1, type: 3}
-  bottomLeftBorder: {fileID: 2800000, guid: de6dded5f98396442ac1afc983779bdc, type: 3}
-  topRightBorder: {fileID: 2800000, guid: 3edb4052b4c0f944a9c5eadaa96e9bf0, type: 3}
-  bottomRightBorder: {fileID: 2800000, guid: 07ad1c6a8b0cee54f9468f51c035b8c5, type: 3}
 --- !u!1 &979801177
 GameObject:
   m_ObjectHideFlags: 0
