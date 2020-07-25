@@ -8,12 +8,13 @@ public class SelectionManager : MonoBehaviour {
     private DrawSelectionIndicator _dsi;
     private bool _selectionStarted;
     private Vector3 _mousePosition1;
-    private List<int> _selectedObjects;
+    private List<int> _selectedObjectsIndex;
     public static List<Selectable> selectables = new List<Selectable>();
+    public Color selectionColor;
 
     private void Start() {
         _selectionStarted = false;
-        _selectedObjects = new List<int>();
+        _selectedObjectsIndex = new List<int>();
         _dsi = GetComponent<DrawSelectionIndicator>();
     }
     
@@ -31,11 +32,11 @@ public class SelectionManager : MonoBehaviour {
         // Detect which Objects are inside selection rectangle
         if (_selectionStarted) {
             Camera camera = Camera.main;
-            _selectedObjects.Clear();
+            _selectedObjectsIndex.Clear();
             for (int i = 0; i < selectables.Count; i++) {
-                Bounds viewportBounds = _dsi.GetViewportBounds(camera, _mousePosition1, Input.mousePosition);
+                Bounds viewportBounds = GetViewportBounds(camera, _mousePosition1, Input.mousePosition);
                 if (viewportBounds.Contains(camera.WorldToViewportPoint(selectables[i].transform.position))) {
-                    _selectedObjects.Add(i);
+                    _selectedObjectsIndex.Add(i);
                 }
             }
         }
@@ -43,17 +44,30 @@ public class SelectionManager : MonoBehaviour {
     
     void OnGUI() {
         if (_selectionStarted) {
+            // get the rectangle of the player selection
             Rect rect = _dsi.GetScreenSelectionRectangle(_mousePosition1, Input.mousePosition);
-            _dsi.DrawScreenRectBorder(rect, 2, Color.cyan);
+            // draw the player's selection rectangle
+            _dsi.DrawScreenRectBorder(rect, 2, selectionColor);
         }
-
         // Draw selection edges
-        if (_selectedObjects.Count > 0) {
+        if (_selectedObjectsIndex.Count > 0) {
             Camera camera = Camera.main;
-            for (int i = 0; i < _selectedObjects.Count; i++) {
-                Debug.Log(i + " / " + _selectedObjects[i].ToString());
-                _dsi.DrawIndicator(camera, selectables[_selectedObjects[i]].GetObjectBounds());
+            for (int i = 0; i < _selectedObjectsIndex.Count; i++) {
+                _dsi.DrawIndicator(camera, selectables[_selectedObjectsIndex[i]].GetObjectBounds());
             }
         }
+    }
+
+    // Defines a volume such as seen by the camera and delimited by the player
+    public Bounds GetViewportBounds(Camera camera, Vector3 screenPosition1, Vector3 screenPosition2) {
+        Vector3 v1 = camera.ScreenToViewportPoint(screenPosition1);
+        Vector3 v2 = camera.ScreenToViewportPoint(screenPosition2);
+        Vector3 min = Vector3.Min(v1, v2);
+        Vector3 max = Vector3.Max(v1, v2);
+        min.z = camera.nearClipPlane;
+        max.z = camera.farClipPlane;
+        Bounds bounds = new Bounds();
+        bounds.SetMinMax(min, max);
+        return bounds;
     }
 }

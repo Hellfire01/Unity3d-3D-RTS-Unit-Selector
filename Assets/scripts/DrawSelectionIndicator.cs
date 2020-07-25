@@ -1,42 +1,42 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class DrawSelectionIndicator : MonoBehaviour {
     public Texture topLeftBorder;
     public Texture bottomLeftBorder;
     public Texture topRightBorder;
     public Texture bottomRightBorder;
+    public int textureOffset;
+    public int textureSize;
     Texture2D _borderTexture;
 
-    Texture2D borderTexture {
-        get {
-            if (_borderTexture == null) {
-                _borderTexture = new Texture2D(1, 1);
-                _borderTexture.SetPixel(0, 0, Color.white);
-                _borderTexture.Apply();
-            }
-            return _borderTexture;
-        }
+    private void Start() {
+        _borderTexture = new Texture2D(1, 1);
+        _borderTexture.SetPixel(0, 0, Color.white);
+        _borderTexture.Apply();
     }
 
+    // draws the player's selection rectangle
     public void DrawScreenRectBorder(Rect rect, float thickness, Color color) {
-        // Top
-        DrawBorderRect(new Rect(rect.xMin, rect.yMin, rect.width, thickness), color);
-        // Left
-        DrawBorderRect(new Rect(rect.xMin, rect.yMin, thickness, rect.height), color);
-        // Right
-        DrawBorderRect(new Rect(rect.xMax - thickness, rect.yMin, thickness, rect.height), color);
-        // Bottom
-        DrawBorderRect(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), color);
+        DrawBorderRect(new Rect(rect.xMin, rect.yMin, rect.width, thickness), color); // Top
+        DrawBorderRect(new Rect(rect.xMin, rect.yMin, thickness, rect.height), color); // Left
+        DrawBorderRect(new Rect(rect.xMax - thickness, rect.yMin, thickness, rect.height), color); // Right
+        DrawBorderRect(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), color); // bottom
     }
 
+    // draws the player's selection rectangle
+    // called by DrawScreenRectBorder
     void DrawBorderRect(Rect rect, Color color) {
         GUI.color = color;
-        GUI.DrawTexture(rect, borderTexture);
+        GUI.DrawTexture(rect, _borderTexture);
         GUI.color = Color.white;
     }
 
+    // gets the player's selection rectangle
+    // the rectangle is defined by the position at witch the user did a clic and the current position of the mouse
     public Rect GetScreenSelectionRectangle(Vector3 screenPosition1, Vector3 screenPosition2) {
         // Move origin from bottom left to top left
         screenPosition1.y = Screen.height - screenPosition1.y;
@@ -48,18 +48,8 @@ public class DrawSelectionIndicator : MonoBehaviour {
         return Rect.MinMaxRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
     }
 
-    public Bounds GetViewportBounds(Camera camera, Vector3 screenPosition1, Vector3 screenPosition2) {
-        Vector3 v1 = camera.ScreenToViewportPoint(screenPosition1);
-        Vector3 v2 = camera.ScreenToViewportPoint(screenPosition2);
-        Vector3 min = Vector3.Min(v1, v2);
-        Vector3 max = Vector3.Max(v1, v2);
-        min.z = camera.nearClipPlane;
-        max.z = camera.farClipPlane;
-        Bounds bounds = new Bounds();
-        bounds.SetMinMax(min, max);
-        return bounds;
-    }
-
+    // displays the box around a selected GameObject given the 4 textures used in the corners
+    // the selection will be drawn correctly no matter the orientation of the unit
     public void DrawIndicator(Camera camera, Bounds bounds) {
         Vector3 boundPoint1 = bounds.min;
         Vector3 boundPoint2 = bounds.max;
@@ -84,28 +74,28 @@ public class DrawSelectionIndicator : MonoBehaviour {
         Vector2 bottomRightPosition = Vector2.zero;
 
         for (int a = 0; a < screenPoints.Length; a++) {
-            //Top Left
+            // Top left texture
             if (topLeftPosition.x == 0 || topLeftPosition.x > screenPoints[a].x) {
                 topLeftPosition.x = screenPoints[a].x;
             }
             if (topLeftPosition.y == 0 || topLeftPosition.y > Screen.height - screenPoints[a].y) {
                 topLeftPosition.y = Screen.height - screenPoints[a].y;
             }
-            //Top Right
+            // Top right texture
             if (topRightPosition.x == 0 || topRightPosition.x < screenPoints[a].x) {
                 topRightPosition.x = screenPoints[a].x;
             }
             if (topRightPosition.y == 0 || topRightPosition.y > Screen.height - screenPoints[a].y) {
                 topRightPosition.y = Screen.height - screenPoints[a].y;
             }
-            //Bottom Left
+            // Bottom left texture
             if (bottomLeftPosition.x == 0 || bottomLeftPosition.x > screenPoints[a].x) {
                 bottomLeftPosition.x = screenPoints[a].x;
             }
             if (bottomLeftPosition.y == 0 || bottomLeftPosition.y < Screen.height - screenPoints[a].y) {
                 bottomLeftPosition.y = Screen.height - screenPoints[a].y;
             }
-            //Bottom Right
+            // Bottom right texture
             if (bottomRightPosition.x == 0 || bottomRightPosition.x < screenPoints[a].x) {
                 bottomRightPosition.x = screenPoints[a].x;
             }
@@ -113,9 +103,9 @@ public class DrawSelectionIndicator : MonoBehaviour {
                 bottomRightPosition.y = Screen.height - screenPoints[a].y;
             }
         }
-        GUI.DrawTexture(new Rect(topLeftPosition.x - 16, topLeftPosition.y - 16, 16, 16), topLeftBorder);
-        GUI.DrawTexture(new Rect(topRightPosition.x, topRightPosition.y - 16, 16, 16), topRightBorder);
-        GUI.DrawTexture(new Rect(bottomLeftPosition.x - 16, bottomLeftPosition.y, 16, 16), bottomLeftBorder);
-        GUI.DrawTexture(new Rect(bottomRightPosition.x, bottomRightPosition.y, 16, 16), bottomRightBorder);
+        GUI.DrawTexture(new Rect(topLeftPosition.x - textureOffset - textureSize, topLeftPosition.y - textureOffset - textureSize, textureSize, textureSize), topLeftBorder);
+        GUI.DrawTexture(new Rect(topRightPosition.x + textureOffset, topRightPosition.y - textureOffset - textureSize, textureSize, textureSize), topRightBorder);
+        GUI.DrawTexture(new Rect(bottomLeftPosition.x - textureOffset - textureSize, bottomLeftPosition.y + textureOffset, textureSize, textureSize), bottomLeftBorder);
+        GUI.DrawTexture(new Rect(bottomRightPosition.x + textureOffset, bottomRightPosition.y + textureOffset, textureSize, textureSize), bottomRightBorder);
     }    
 }

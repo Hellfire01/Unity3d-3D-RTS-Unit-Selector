@@ -1535,6 +1535,8 @@ MonoBehaviour:
   bottomLeftBorder: {fileID: 2800000, guid: de6dded5f98396442ac1afc983779bdc, type: 3}
   topRightBorder: {fileID: 2800000, guid: 3edb4052b4c0f944a9c5eadaa96e9bf0, type: 3}
   bottomRightBorder: {fileID: 2800000, guid: 07ad1c6a8b0cee54f9468f51c035b8c5, type: 3}
+  textureOffset: 0
+  textureSize: 16
 --- !u!4 &957566354
 Transform:
   m_ObjectHideFlags: 0
@@ -1561,6 +1563,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59d1d98c802f9c54f8ad5baa7828314d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectionColor: {r: 0, g: 1, b: 0.95833325, a: 1}
 --- !u!1 &979801177
 GameObject:
   m_ObjectHideFlags: 0
