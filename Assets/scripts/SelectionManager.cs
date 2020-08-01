@@ -11,6 +11,8 @@ public class SelectionManager : MonoBehaviour {
     private List<int> _selectedObjectsIndex;
     public static List<Selectable> selectables = new List<Selectable>();
     public Color selectionColor;
+    
+    private Bounds _cameraBounds;
 
     private void Start() {
         _selectionStarted = false;
@@ -34,14 +36,26 @@ public class SelectionManager : MonoBehaviour {
             Camera camera = Camera.main;
             _selectedObjectsIndex.Clear();
             for (int i = 0; i < selectables.Count; i++) {
-                Bounds viewportBounds = GetViewportBounds(camera, _mousePosition1, Input.mousePosition);
-                if (viewportBounds.Contains(camera.WorldToViewportPoint(selectables[i].transform.position))) {
+                _cameraBounds = GetViewportBounds(camera, _mousePosition1, Input.mousePosition);
+                Debug.Log(_cameraBounds.ToString() + " / " + selectables[i].GetObjectBounds().ToString());
+                if (_cameraBounds.Contains(camera.WorldToViewportPoint(selectables[i].transform.position))) {
                     _selectedObjectsIndex.Add(i);
                 }
             }
         }
     }
-    
+
+    private void OnDrawGizmos() {
+        // for (int i = 0; i < selectables.Count; i++) {
+        //     Gizmos.color = Color.red;
+        //     Bounds bounds = selectables[i].GetObjectBounds();
+        //     Gizmos.DrawCube(bounds.center, bounds.size);
+        // }
+        Camera camera = Camera.main;
+        Gizmos.color = Color.red;
+        Gizmos.DrawCube(camera.WorldToViewportPoint(_cameraBounds.center), camera.WorldToViewportPoint(_cameraBounds.size));
+    }
+
     void OnGUI() {
         if (_selectionStarted) {
             // get the rectangle of the player selection
