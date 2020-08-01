@@ -8,15 +8,18 @@ public class CameraFarClipPlaneControl : MonoBehaviour {
     public float distanceToGround = 0;
     
     private void Update() {
-        float extend = 50f;
-        RaycastHit hit;
-
-        if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit, Mathf.Infinity)) {
-            Debug.DrawRay(mainCamera.transform.position, mainCamera.transform.forward * 1000f, Color.green);
-            distanceToGround = Vector3.Distance(mainCamera.transform.position, hit.point);
-            mainCamera.farClipPlane = distanceToGround * 4;
-        } else {
-            Debug.DrawRay(mainCamera.transform.position, Camera.main.transform.forward * 1000f, Color.red);
-        }
+        
+        // the following code needs to be recycled in order to keep the camera above the ground rather than change the clipping planes
+        
+        // float extend = 50f;
+        // RaycastHit hit;
+        //
+        // if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit, Mathf.Infinity)) {
+        //     Debug.DrawRay(mainCamera.transform.position, mainCamera.transform.forward * 1000f, Color.green);
+        //     distanceToGround = Vector3.Distance(mainCamera.transform.position, hit.point);
+        //     mainCamera.farClipPlane = distanceToGround * 4;
+        // } else {
+        //     Debug.DrawRay(mainCamera.transform.position, Camera.main.transform.forward * 1000f, Color.red);
+        // }
     }
 }
