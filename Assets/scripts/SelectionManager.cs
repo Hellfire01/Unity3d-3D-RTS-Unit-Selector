@@ -51,9 +51,9 @@ public class SelectionManager : MonoBehaviour {
         //     Bounds bounds = selectables[i].GetObjectBounds();
         //     Gizmos.DrawCube(bounds.center, bounds.size);
         // }
-        Camera camera = Camera.main;
-        Gizmos.color = Color.red;
-        Gizmos.DrawCube(camera.WorldToViewportPoint(_cameraBounds.center), camera.WorldToViewportPoint(_cameraBounds.size));
+        // Camera camera = Camera.main;
+        // Gizmos.color = Color.red;
+        // Gizmos.DrawCube(camera.WorldToViewportPoint(_cameraBounds.center), camera.WorldToViewportPoint(_cameraBounds.size));
     }
 
     void OnGUI() {

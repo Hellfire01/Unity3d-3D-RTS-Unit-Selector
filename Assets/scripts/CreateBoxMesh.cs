@@ -3,15 +3,18 @@ using System;
 using UnityEngine;
 
 public class CreateBoxMesh : MonoBehaviour {
-    private void Start() {
-	    // original code here : http://wiki.unity3d.com/index.php/ProceduralPrimitives
+	private void Start() {
+	}
+	
+	public void GenerateBoxMesh() {
+		// original code here : http://wiki.unity3d.com/index.php/ProceduralPrimitives
         // You can change that line to provide another MeshFilter
 		MeshFilter filter = gameObject.GetComponent< MeshFilter >();
 		Mesh mesh = filter.mesh;
 		mesh.Clear();
-		float length = 1f;
-		float width = 1f;
-		float height = 1f;
+		float length = 10f;
+		float width = 10f;
+		float height = 10f;
 		 
 		#region Vertices
 		Vector3 p0 = new Vector3( -length * .5f,	-width * .5f, height * .5f );
