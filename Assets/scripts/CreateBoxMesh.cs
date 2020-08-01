@@ -6,7 +6,7 @@ public class CreateBoxMesh : MonoBehaviour {
     private void Start() {
 	    // original code here : http://wiki.unity3d.com/index.php/ProceduralPrimitives
         // You can change that line to provide another MeshFilter
-		MeshFilter filter = gameObject.AddComponent< MeshFilter >();
+		MeshFilter filter = gameObject.GetComponent< MeshFilter >();
 		Mesh mesh = filter.mesh;
 		mesh.Clear();
 		float length = 1f;
