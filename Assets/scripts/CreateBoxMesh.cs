@@ -1,16 +1,12 @@
 ﻿
-using System;
 using UnityEngine;
 
-public class CreateBoxMesh : MonoBehaviour {
-	private void Start() {
-	}
+public static class CreateBoxMesh {
 	
-	public void GenerateBoxMesh() {
+	public static void GenerateBoxMesh(MeshFilter filter) {
 		// original code here : http://wiki.unity3d.com/index.php/ProceduralPrimitives
         // You can change that line to provide another MeshFilter
-		MeshFilter filter = gameObject.GetComponent< MeshFilter >();
-		Mesh mesh = filter.mesh;
+        Mesh mesh = filter.mesh;
 		mesh.Clear();
 		float length = 10f;
 		float width = 10f;

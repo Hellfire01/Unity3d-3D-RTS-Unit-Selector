@@ -1,10 +1,6 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
-public class GetClipPlanePoints : MonoBehaviour {
-    public Camera mainCamera;
-    
+public static class GetClipPlanePoints {
     public struct ClipPlanePoints {
         public Vector3 UpperLeft;
         public Vector3 UpperRight;
@@ -12,12 +8,7 @@ public class GetClipPlanePoints : MonoBehaviour {
         public Vector3 LowerRight;
     }
 
-    private void Update() {
-        ClipPlanePoints tmp = getClipPlanePoints(mainCamera.nearClipPlane);
-        Debug.Log(tmp.LowerLeft + ", " + tmp.LowerRight);
-    }
-
-    public ClipPlanePoints getClipPlanePoints(float distance) {
+    public static ClipPlanePoints getClipPlanePoints(Camera mainCamera, float distance) {
         ClipPlanePoints clipPlanePoints = new ClipPlanePoints();
         Transform cameraTransform = mainCamera.transform;
         Vector3 pos = cameraTransform.position;

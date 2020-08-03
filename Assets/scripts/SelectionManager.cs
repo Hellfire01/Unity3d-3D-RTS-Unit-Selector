@@ -9,8 +9,12 @@ public class SelectionManager : MonoBehaviour {
     private bool _selectionStarted;
     private Vector3 _mousePosition1;
     private List<int> _selectedObjectsIndex;
+    private MeshFilter _selectionBoxMeshFilter;
+    
     public static List<Selectable> selectables = new List<Selectable>();
     public Color selectionColor;
+    public GameObject selectionMesh;
+    public Camera mainCamera;
     
     private Bounds _cameraBounds;
 
@@ -18,6 +22,8 @@ public class SelectionManager : MonoBehaviour {
         _selectionStarted = false;
         _selectedObjectsIndex = new List<int>();
         _dsi = GetComponent<DrawSelectionIndicator>();
+        _selectionBoxMeshFilter = selectionMesh.GetComponent<MeshFilter>();
+        CreateBoxMesh.GenerateBoxMesh(_selectionBoxMeshFilter);
     }
     
     // Update is called once per frame
