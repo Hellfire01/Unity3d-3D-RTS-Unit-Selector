@@ -9,6 +9,8 @@ public class SelectionManager : MonoBehaviour {
     private List<int> _selectedObjectsIndex;
     private MeshFilter _selectionBoxMeshFilter;
     private Bounds _cameraBounds;
+    private Rect _selectionRect;
+
     
     public static List<Selectable> selectables = new List<Selectable>();
     public Color selectionColor;
@@ -37,17 +39,34 @@ public class SelectionManager : MonoBehaviour {
         // Detect which Objects are inside selection rectangle
         if (_selectionStarted) {
             _selectedObjectsIndex.Clear();
+            // get the rectangle of the player selection
+            _selectionRect = _dsi.GetScreenSelectionRectangle(_mousePosition1, Input.mousePosition);
+            UpdateSelectionMeshValues();
             for (int i = 0; i < selectables.Count; i++) {
                 _cameraBounds = GetViewportBounds(_mousePosition1, Input.mousePosition);
-                // Debug.Log(_cameraBounds.ToString() + " / " + selectables[i].GetObjectBounds().ToString());
                 if (_cameraBounds.Contains(mainCamera.WorldToViewportPoint(selectables[i].transform.position))) {
                     _selectedObjectsIndex.Add(i);
                 }
             }
         }
-        Debug.Log(Input.mousePosition.ToString());
     }
 
+    private void UpdateSelectionMeshValues() {
+        // top right
+        Vector2 p0Ratio = new Vector2(_selectionRect.xMax / Screen.width,
+                                      _selectionRect.yMin / Screen.height);
+        // top left
+        Vector2 p1Ratio = new Vector2(_selectionRect.xMin / Screen.width,
+                                      _selectionRect.yMin / Screen.height);
+        // bottom left
+        Vector2 p2Ratio = new Vector2(_selectionRect.xMin / Screen.width,
+                                      _selectionRect.yMax / Screen.height);
+        // bottom right
+        Vector2 p3Ratio = new Vector2(_selectionRect.xMax / Screen.width,
+                                      _selectionRect.yMax / Screen.height);
+        Debug.Log(p1Ratio + ", " + p3Ratio);
+    }
+    
     private void UpdateSelectionMesh() {
         Vector2 p0Ratio = new Vector2();
     }
@@ -65,10 +84,8 @@ public class SelectionManager : MonoBehaviour {
 
     void OnGUI() {
         if (_selectionStarted) {
-            // get the rectangle of the player selection
-            Rect rect = _dsi.GetScreenSelectionRectangle(_mousePosition1, Input.mousePosition);
             // draw the player's selection rectangle
-            _dsi.DrawScreenRectBorder(rect, 2, selectionColor);
+            _dsi.DrawScreenRectBorder(_selectionRect, 2, selectionColor);
         }
         // Draw selection edges
         if (_selectedObjectsIndex.Count > 0) {
