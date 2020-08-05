@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public static class GetClipPlanePoints {
     public struct ClipPlanePoints {
@@ -6,6 +7,13 @@ public static class GetClipPlanePoints {
         public Vector3 UpperRight;
         public Vector3 LowerLeft;
         public Vector3 LowerRight;
+
+        public String getString() {
+            return ("(" + UpperLeft.x + "," + UpperLeft.y + "), " +
+                    "(" + UpperRight.x + "," + UpperRight.y + "), " +
+                    "(" + LowerLeft.x + "," + LowerLeft.y + "), " +
+                    "(" + LowerRight.x + "," + LowerRight.y + ")");
+        }
     }
 
     public static ClipPlanePoints getClipPlanePoints(Camera mainCamera, float distance) {

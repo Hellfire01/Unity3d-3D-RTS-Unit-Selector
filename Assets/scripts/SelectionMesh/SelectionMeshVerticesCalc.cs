@@ -48,24 +48,27 @@ public class SelectionMeshVerticesCalc {
 
     // apply selection rectangle on given clip plane
     private void getVertices(out Vector3 pA, out Vector3 pB, out Vector3 pC, out Vector3 pD, float distance) {
-        GetClipPlanePoints.ClipPlanePoints nearClipPlanePoints = GetClipPlanePoints.getClipPlanePoints(_mainCamera, distance);
-        float nearPlaneWidth = Vector3.Distance(nearClipPlanePoints.LowerLeft, nearClipPlanePoints.LowerRight);
-        float nearPlaneHeight = Vector3.Distance(nearClipPlanePoints.UpperRight, nearClipPlanePoints.LowerRight);
+        GetClipPlanePoints.ClipPlanePoints ncpp = GetClipPlanePoints.getClipPlanePoints(_mainCamera, distance);
+        
+        Debug.Log(ncpp.getString());
+        
+        float nearPlaneWidth = Vector3.Distance(ncpp.LowerLeft, ncpp.LowerRight);
+        float nearPlaneHeight = Vector3.Distance(ncpp.UpperRight, ncpp.LowerRight);
         _pointer.transform.eulerAngles = _mainCamera.transform.eulerAngles;
         // pA
-        _pointer.transform.position = nearClipPlanePoints.LowerLeft;
+        _pointer.transform.position = ncpp.LowerLeft;
         _pointer.transform.Translate(nearPlaneWidth * p0Ratio.x, nearPlaneHeight * p0Ratio.y, 0);
         pA = _pointer.transform.position;
         // pB
-        _pointer.transform.position = nearClipPlanePoints.LowerLeft;
+        _pointer.transform.position = ncpp.LowerLeft;
         _pointer.transform.Translate(nearPlaneWidth * p1Ratio.x, nearPlaneHeight * p1Ratio.y, 0);
         pB = _pointer.transform.position;
         // pC
-        _pointer.transform.position = nearClipPlanePoints.LowerLeft;
+        _pointer.transform.position = ncpp.LowerLeft;
         _pointer.transform.Translate(nearPlaneWidth * p2Ratio.x, nearPlaneHeight * p2Ratio.y, 0);
         pC = _pointer.transform.position;
         // pD
-        _pointer.transform.position = nearClipPlanePoints.LowerLeft;
+        _pointer.transform.position = ncpp.LowerLeft;
         _pointer.transform.Translate(nearPlaneWidth * p3Ratio.x, nearPlaneHeight * p3Ratio.y, 0);
         pD = _pointer.transform.position;
     }
