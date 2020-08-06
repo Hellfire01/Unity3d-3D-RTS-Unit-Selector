@@ -16,6 +16,7 @@ public class SelectionManager : MonoBehaviour {
     private Bounds _cameraBounds;
     private Rect _selectionRect;
     private GameObject _pointer;
+    private SelectionMeshVerticesCalc _smvc;
 
     private void Start() {
         _selectionStarted = false;
@@ -25,6 +26,7 @@ public class SelectionManager : MonoBehaviour {
         CreatePrimitiveMesh.GenerateBoxMesh(_selectionBoxMeshFilter);
         _pointer = new GameObject();
         _pointer.name = "pointer for unit selection";
+        _smvc = new SelectionMeshVerticesCalc(mainCamera, _selectionRect);
     }
     
     // Update is called once per frame
@@ -54,21 +56,47 @@ public class SelectionManager : MonoBehaviour {
     }
 
     private void UpdateSelectionMeshValues() {
-        SelectionMeshVerticesCalc smvc = new SelectionMeshVerticesCalc(mainCamera, _selectionRect);
-        // == vertices of the mesh ==
+        // _smvc.calc();
+        // // == vertices of the mesh ==
+        // Vector3[] vertices = new Vector3[] {
+        //     // Bottom
+        //     _smvc.p0, _smvc.p1, _smvc.p2, _smvc.p3,
+        //     // Left
+        //     _smvc.p7, _smvc.p4, _smvc.p0, _smvc.p3,
+        //     // Front
+        //     _smvc.p4, _smvc.p5, _smvc.p1, _smvc.p0,
+        //     // Back
+        //     _smvc.p6, _smvc.p7, _smvc.p3, _smvc.p2,
+        //     // Right
+        //     _smvc.p5, _smvc.p6, _smvc.p2, _smvc.p1,
+        //     // Top
+        //     _smvc.p7, _smvc.p6, _smvc.p5, _smvc.p4
+        // };
+        float width = 10f;
+        float height = 10f;
+        float length = 10f;
+        Vector3 p0 = new Vector3(-width * .5f, -height * .5f, length * .5f);
+        Vector3 p1 = new Vector3(width * .5f, -height * .5f, length * .5f);
+        Vector3 p2 = new Vector3(width * .5f, -height * .5f, -length * .5f);
+        Vector3 p3 = new Vector3(-width * .5f, -height * .5f, -length * .5f);
+        Vector3 p4 = new Vector3(-width * .5f, height * .5f, length * .5f);
+        Vector3 p5 = new Vector3(width * .5f, height * .5f, length * .5f);
+        Vector3 p6 = new Vector3(width * .5f, height * .5f, -length * .5f);
+        Vector3 p7 = new Vector3(-width * .5f, height * .5f, -length * .5f);
+
         Vector3[] vertices = new Vector3[] {
             // Bottom
-            smvc.p0, smvc.p1, smvc.p2, smvc.p3,
+            p0, p1, p2, p3,
             // Left
-            smvc.p7, smvc.p4, smvc.p0, smvc.p3,
+            p7, p4, p0, p3,
             // Front
-            smvc.p4, smvc.p5, smvc.p1, smvc.p0,
+            p4, p5, p1, p0,
             // Back
-            smvc.p6, smvc.p7, smvc.p3, smvc.p2,
+            p6, p7, p3, p2,
             // Right
-            smvc.p5, smvc.p6, smvc.p2, smvc.p1,
+            p5, p6, p2, p1,
             // Top
-            smvc.p7, smvc.p6, smvc.p5, smvc.p4
+            p7, p6, p5, p4
         };
         _selectionBoxMeshFilter.mesh.vertices = vertices;
     }

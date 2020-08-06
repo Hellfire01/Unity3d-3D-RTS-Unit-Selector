@@ -25,6 +25,9 @@ public class SelectionMeshVerticesCalc {
         _selectionRect = selectionRect;
         _pointer = new GameObject();
         _pointer.name = "pointer for pos of vertices of select mesh";
+    }
+
+    public void calc() {
         getRatios();
         getVertices(out p0, out p1, out p2, out p3, _mainCamera.nearClipPlane);
         getVertices(out p4, out p5, out p6, out p7, _mainCamera.farClipPlane);
