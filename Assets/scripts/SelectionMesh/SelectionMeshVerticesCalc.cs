@@ -34,42 +34,43 @@ public class SelectionMeshVerticesCalc {
     private void getRatios() {
         // top right
         p0Ratio = new Vector2(_selectionRect.xMax / Screen.width,
-                              _selectionRect.yMin / Screen.height);
+                              1 - _selectionRect.yMin / Screen.height);
         // top left
         p1Ratio = new Vector2(_selectionRect.xMin / Screen.width,
-                              _selectionRect.yMin / Screen.height);
+                              1 - _selectionRect.yMin / Screen.height);
         // bottom left
         p2Ratio = new Vector2(_selectionRect.xMin / Screen.width,
-                              _selectionRect.yMax / Screen.height);
+                              1 - _selectionRect.yMax / Screen.height);
         // bottom right
         p3Ratio = new Vector2(_selectionRect.xMax / Screen.width,
-                              _selectionRect.yMax / Screen.height);
+                              1 - _selectionRect.yMax / Screen.height);
+        // Debug.Log(p0Ratio + ", " + p1Ratio + ", " + p2Ratio + ", " + p3Ratio);
     }
 
     // apply selection rectangle on given clip plane
     private void getVertices(out Vector3 pA, out Vector3 pB, out Vector3 pC, out Vector3 pD, float distance) {
+        if (distance > 100) {
+            distance = 100;
+        } 
         GetClipPlanePoints.ClipPlanePoints ncpp = GetClipPlanePoints.getClipPlanePoints(_mainCamera, distance);
-        
-        Debug.Log(ncpp.getString());
-        
-        float nearPlaneWidth = Vector3.Distance(ncpp.LowerLeft, ncpp.LowerRight);
-        float nearPlaneHeight = Vector3.Distance(ncpp.UpperRight, ncpp.LowerRight);
+        float planeWidth = Vector3.Distance(ncpp.LowerLeft, ncpp.LowerRight);
+        float planeHeight = Vector3.Distance(ncpp.UpperRight, ncpp.LowerRight);
         _pointer.transform.eulerAngles = _mainCamera.transform.eulerAngles;
-        // pA
+        // p0 / p4 / top left
         _pointer.transform.position = ncpp.LowerLeft;
-        _pointer.transform.Translate(nearPlaneWidth * p0Ratio.x, nearPlaneHeight * p0Ratio.y, 0);
+        _pointer.transform.Translate(planeWidth * p2Ratio.x, planeHeight * p2Ratio.y, 0);
         pA = _pointer.transform.position;
-        // pB
+        // p1 / p5
         _pointer.transform.position = ncpp.LowerLeft;
-        _pointer.transform.Translate(nearPlaneWidth * p1Ratio.x, nearPlaneHeight * p1Ratio.y, 0);
+        _pointer.transform.Translate(planeWidth * p3Ratio.x, planeHeight * p3Ratio.y, 0);
         pB = _pointer.transform.position;
-        // pC
+        // p2 / p6
         _pointer.transform.position = ncpp.LowerLeft;
-        _pointer.transform.Translate(nearPlaneWidth * p2Ratio.x, nearPlaneHeight * p2Ratio.y, 0);
+        _pointer.transform.Translate(planeWidth * p0Ratio.x, planeHeight * p0Ratio.y, 0);
         pC = _pointer.transform.position;
-        // pD
+        // p3 / p7
         _pointer.transform.position = ncpp.LowerLeft;
-        _pointer.transform.Translate(nearPlaneWidth * p3Ratio.x, nearPlaneHeight * p3Ratio.y, 0);
+        _pointer.transform.Translate(planeWidth * p1Ratio.x, planeHeight * p1Ratio.y, 0);
         pD = _pointer.transform.position;
     }
 }

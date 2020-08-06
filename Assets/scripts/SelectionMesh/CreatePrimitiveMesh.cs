@@ -12,14 +12,14 @@ public static class CreatePrimitiveMesh {
 		float height = 10f;
 		 
 		#region Vertices
-		Vector3 p0 = new Vector3( -length * .5f,	-width * .5f, height * .5f );
-		Vector3 p1 = new Vector3( length * .5f, 	-width * .5f, height * .5f );
-		Vector3 p2 = new Vector3( length * .5f, 	-width * .5f, -height * .5f );
-		Vector3 p3 = new Vector3( -length * .5f,	-width * .5f, -height * .5f );
-		Vector3 p4 = new Vector3( -length * .5f,	width * .5f,  height * .5f );
-		Vector3 p5 = new Vector3( length * .5f, 	width * .5f,  height * .5f );
-		Vector3 p6 = new Vector3( length * .5f, 	width * .5f,  -height * .5f );
-		Vector3 p7 = new Vector3( -length * .5f,	width * .5f,  -height * .5f );
+		Vector3 p0 = new Vector3(-width * .5f, -height * .5f, length * .5f);
+		Vector3 p1 = new Vector3(width * .5f, -height * .5f, length * .5f);
+		Vector3 p2 = new Vector3(width * .5f, -height * .5f, -length * .5f);
+		Vector3 p3 = new Vector3(-width * .5f, -height * .5f, -length * .5f);
+		Vector3 p4 = new Vector3(-width * .5f, height * .5f, length * .5f);
+		Vector3 p5 = new Vector3(width * .5f, height * .5f,length * .5f);
+		Vector3 p6 = new Vector3(width * .5f, height * .5f, -length * .5f);
+		Vector3 p7 = new Vector3(-width * .5f, height * .5f, -length * .5f);
 		 
 		Vector3[] vertices = new Vector3[] {
 			// Bottom
@@ -38,12 +38,12 @@ public static class CreatePrimitiveMesh {
 		#endregion
 		 
 		#region Normales
-		Vector3 up 	= Vector3.up;
-		Vector3 down 	= Vector3.down;
-		Vector3 front 	= Vector3.forward;
-		Vector3 back 	= Vector3.back;
-		Vector3 left 	= Vector3.left;
-		Vector3 right 	= Vector3.right;
+		Vector3 up = Vector3.up;
+		Vector3 down = Vector3.down;
+		Vector3 front = Vector3.forward;
+		Vector3 back = Vector3.back;
+		Vector3 left = Vector3.left;
+		Vector3 right = Vector3.right;
 		 
 		Vector3[] normales = new Vector3[] {
 			// Bottom
