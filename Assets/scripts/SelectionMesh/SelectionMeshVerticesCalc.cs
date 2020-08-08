@@ -56,10 +56,11 @@ public class SelectionMeshVerticesCalc {
             distance = 100;
         } 
         GetClipPlanePoints.ClipPlanePoints ncpp = GetClipPlanePoints.getClipPlanePoints(_mainCamera, distance);
+        Debug.Log(ncpp.getString());
         float planeWidth = Vector3.Distance(ncpp.LowerLeft, ncpp.LowerRight);
         float planeHeight = Vector3.Distance(ncpp.UpperRight, ncpp.LowerRight);
         _pointer.transform.eulerAngles = _mainCamera.transform.eulerAngles;
-        // p0 / p4 / top left
+        // p0 / p4
         _pointer.transform.position = ncpp.LowerLeft;
         _pointer.transform.Translate(planeWidth * p2Ratio.x, planeHeight * p2Ratio.y, 0);
         pA = _pointer.transform.position;
