@@ -111,7 +111,6 @@ public static class CreatePrimitiveMesh {
 		mesh.uv = uvs;
 		mesh.triangles = triangles;
 		mesh.RecalculateBounds();
-		mesh.Optimize();
     }
 
 	public static void GeneratePlaneMesh(MeshFilter filter) {

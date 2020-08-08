@@ -49,9 +49,6 @@ public class SelectionMeshVerticesCalc {
 
     // apply selection rectangle on given clip plane
     private void getVertices(out Vector3 pA, out Vector3 pB, out Vector3 pC, out Vector3 pD, float distance) {
-        if (distance > 100) {
-            distance = 100;
-        } 
         GetClipPlanePoints.ClipPlanePoints ncpp = GetClipPlanePoints.getClipPlanePoints(_mainCamera, distance);
         float planeWidth = Vector3.Distance(ncpp.LowerLeft, ncpp.LowerRight);
         float planeHeight = Vector3.Distance(ncpp.UpperRight, ncpp.LowerRight);
