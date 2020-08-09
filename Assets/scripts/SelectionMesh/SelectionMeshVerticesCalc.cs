@@ -26,7 +26,7 @@ public class SelectionMeshVerticesCalc {
         _pointer = new GameObject();
         _pointer.name = "pointer for pos of vertices of select mesh";
         getRatios();
-        getVertices(out p0, out p1, out p2, out p3, _mainCamera.nearClipPlane);
+        getVertices(out p0, out p1, out p2, out p3, _mainCamera.nearClipPlane + 0.1f);
         getVertices(out p4, out p5, out p6, out p7, _mainCamera.farClipPlane);
     }
 
@@ -49,6 +49,7 @@ public class SelectionMeshVerticesCalc {
 
     // apply selection rectangle on given clip plane
     private void getVertices(out Vector3 pA, out Vector3 pB, out Vector3 pC, out Vector3 pD, float distance) {
+        distance = Mathf.Clamp(distance, 3f, 100f);
         GetClipPlanePoints.ClipPlanePoints ncpp = GetClipPlanePoints.getClipPlanePoints(_mainCamera, distance);
         float planeWidth = Vector3.Distance(ncpp.LowerLeft, ncpp.LowerRight);
         float planeHeight = Vector3.Distance(ncpp.UpperRight, ncpp.LowerRight);
