@@ -12,7 +12,11 @@ public class SelectionManager : MonoBehaviour {
     private bool _selectionStarted;
     private Vector3 _mousePosition1;
     private List<int> _selectedObjectsIndex;
-    private MeshFilter _selectionBoxMeshFilter;
+    // selection mesh
+    private MeshFilter _selectionMeshFilter;
+    private Rigidbody _selectionMeshRigidbody;
+    private MeshCollider _selectionMeshCollider;
+    
     private Bounds _cameraBounds;
     private Rect _selectionRect;
     private GameObject _pointer;
@@ -21,10 +25,17 @@ public class SelectionManager : MonoBehaviour {
         _selectionStarted = false;
         _selectedObjectsIndex = new List<int>();
         _dsi = GetComponent<DrawSelectionIndicator>();
-        _selectionBoxMeshFilter = selectionMesh.GetComponent<MeshFilter>();
-        CreatePrimitiveMesh.GenerateBoxMesh(_selectionBoxMeshFilter);
+        _selectionMeshFilter = selectionMesh.GetComponent<MeshFilter>();
         _pointer = new GameObject();
         _pointer.name = "pointer for unit selection";
+        // selection mesh
+        CreatePrimitiveMesh.GenerateBoxMesh(_selectionMeshFilter);
+        _selectionMeshRigidbody = selectionMesh.AddComponent<Rigidbody>();
+        _selectionMeshRigidbody.useGravity = false;
+        _selectionMeshCollider = selectionMesh.AddComponent<MeshCollider>();
+        _selectionMeshCollider.convex = true;
+        _selectionMeshCollider.isTrigger = true;
+        _selectionMeshCollider.sharedMesh = _selectionMeshFilter.mesh;
     }
     
     // Update is called once per frame
@@ -54,6 +65,7 @@ public class SelectionManager : MonoBehaviour {
     }
 
     private void UpdateSelectionMeshValues() {
+        _selectionMeshCollider.sharedMesh = null;
         SelectionMeshVerticesCalc smvc = new SelectionMeshVerticesCalc(mainCamera, _selectionRect);
         // == vertices of the mesh ==
         Vector3[] vertices = new Vector3[] {
@@ -70,7 +82,8 @@ public class SelectionManager : MonoBehaviour {
             // Top
             smvc.p7, smvc.p6, smvc.p5, smvc.p4
         };
-        _selectionBoxMeshFilter.mesh.vertices = vertices;
+        _selectionMeshFilter.mesh.vertices = vertices;
+        _selectionMeshCollider.sharedMesh = _selectionMeshFilter.mesh;
     }
 
     private void OnDrawGizmos() {
