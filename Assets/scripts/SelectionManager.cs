@@ -105,7 +105,6 @@ public class SelectionManager : MonoBehaviour {
             _smvc.p7, _smvc.p6, _smvc.p5, _smvc.p4
         };
         _selectionMeshFilter.mesh.vertices = vertices;
-        Debug.Log(Vector3.Distance(_mousePosition1, Input.mousePosition) + " " + _mousePosition1 + " " + Input.mousePosition);
         _selectionMeshCollider.sharedMesh = _selectionMeshFilter.mesh;
     }
 
