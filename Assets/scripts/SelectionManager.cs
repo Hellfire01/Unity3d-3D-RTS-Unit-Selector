@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(DrawSelectionIndicator))]
@@ -7,11 +8,13 @@ public class SelectionManager : MonoBehaviour {
     public Color selectionColor;
     public GameObject selectionMesh;
     public Camera mainCamera;
-
+    public LayerMask selectionLayers;
+    
     private DrawSelectionIndicator _dsi;
     private bool _selectionStarted;
     private Vector3 _mousePosition1;
     private List<int> _selectedObjectsIndex;
+
     // selection mesh
     private MeshFilter _selectionMeshFilter;
     private Rigidbody _selectionMeshRigidbody;
@@ -49,24 +52,38 @@ public class SelectionManager : MonoBehaviour {
         if (Input.GetMouseButtonUp(0)) {
             _selectionStarted = false;
         }
-        selectionMesh.SetActive(_selectionStarted);
         // Detect which Objects are inside selection rectangle
         if (_selectionStarted) {
             _selectedObjectsIndex.Clear();
             // get the rectangle of the player selection
             _selectionRect = _dsi.GetScreenSelectionRectangle(_mousePosition1, Input.mousePosition);
-            if (Vector3.Distance(_mousePosition1, Input.mousePosition) > 5) {
+            // the selection mesh cannot be too thin as this causes an error with Unity ( the mesh is no longer considered convex )
+            if (Vector3.Distance(_mousePosition1, Input.mousePosition) > 5 && _mousePosition1.x != Input.mousePosition.x && _mousePosition1.y != Input.mousePosition.y) {
+                selectionMesh.SetActive(true);
                 UpdateSelectionMeshValues();
+            } else {
+                Vector3 middle = Vector3.Lerp(_mousePosition1, Input.mousePosition, 0.5f);
+                
             }
             for (int i = 0; i < selectables.Count; i++) {
                 _cameraBounds = GetViewportBounds(_mousePosition1, Input.mousePosition);
                 if (_cameraBounds.Contains(mainCamera.WorldToViewportPoint(selectables[i].transform.position))) {
-                    _selectedObjectsIndex.Add(i);
+                    addToSelection(i);
                 }
             }
+        } else {
+            selectionMesh.SetActive(false);
         }
     }
 
+    // adds an element to the selection
+    public void addToSelection(int index) {
+        if (_selectedObjectsIndex.Contains(index) == false) {
+            _selectedObjectsIndex.Add(index);
+        }
+    }
+    
+    // update the position of the vertices of the selection mesh according to the user's mouse position on screen
     private void UpdateSelectionMeshValues() {
         _selectionMeshCollider.sharedMesh = null;
         SelectionMeshVerticesCalc smvc = new SelectionMeshVerticesCalc(mainCamera, _selectionRect);
