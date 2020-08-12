@@ -228,7 +228,7 @@ GameObject:
   - component: {fileID: 57717664}
   - component: {fileID: 57717669}
   - component: {fileID: 57717670}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Unit
   m_TagString: Unit
   m_Icon: {fileID: 0}
@@ -1566,6 +1566,9 @@ MonoBehaviour:
   selectionColor: {r: 0, g: 1, b: 0.95833325, a: 1}
   selectionMesh: {fileID: 1764712181}
   mainCamera: {fileID: 534669904}
+  selectionLayers:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!1 &979801177
 GameObject:
   m_ObjectHideFlags: 0

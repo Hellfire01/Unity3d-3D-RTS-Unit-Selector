@@ -20,16 +20,19 @@ public class SelectionMeshVerticesCalc {
     private Rect _selectionRect;
     private GameObject _pointer;
     
-    public SelectionMeshVerticesCalc(Camera mainCamera, Rect selectionRect) {
+    public SelectionMeshVerticesCalc(Camera mainCamera, GameObject pointer) {
         _mainCamera = mainCamera;
-        _selectionRect = selectionRect;
-        _pointer = new GameObject();
-        _pointer.name = "pointer for pos of vertices of select mesh";
+        _pointer = pointer;
+    }
+
+    // gets all of the vertices positions
+    public void calc(Rect selectionRectangle) {
+        _selectionRect = selectionRectangle;
         getRatios();
         getVertices(out p0, out p1, out p2, out p3, _mainCamera.nearClipPlane);
         getVertices(out p4, out p5, out p6, out p7, _mainCamera.farClipPlane);
     }
-
+    
     // gets the ratios of the selection's rectangle ( ratios go from 0 to 1 )
     private void getRatios() {
         // top right

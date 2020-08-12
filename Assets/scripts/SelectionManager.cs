@@ -19,7 +19,8 @@ public class SelectionManager : MonoBehaviour {
     private MeshFilter _selectionMeshFilter;
     private Rigidbody _selectionMeshRigidbody;
     private MeshCollider _selectionMeshCollider;
-    
+
+    private SelectionMeshVerticesCalc _smvc;
     private Bounds _cameraBounds;
     private Rect _selectionRect;
     private GameObject _pointer;
@@ -31,6 +32,7 @@ public class SelectionManager : MonoBehaviour {
         _selectionMeshFilter = selectionMesh.GetComponent<MeshFilter>();
         _pointer = new GameObject();
         _pointer.name = "pointer for unit selection";
+        _smvc = new SelectionMeshVerticesCalc(mainCamera, _pointer);
         // selection mesh
         CreatePrimitiveMesh.GenerateBoxMesh(_selectionMeshFilter);
         _selectionMeshRigidbody = selectionMesh.AddComponent<Rigidbody>();
@@ -85,24 +87,25 @@ public class SelectionManager : MonoBehaviour {
     
     // update the position of the vertices of the selection mesh according to the user's mouse position on screen
     private void UpdateSelectionMeshValues() {
+        _smvc.calc(_selectionRect);
         _selectionMeshCollider.sharedMesh = null;
-        SelectionMeshVerticesCalc smvc = new SelectionMeshVerticesCalc(mainCamera, _selectionRect);
         // == vertices of the mesh ==
         Vector3[] vertices = new Vector3[] {
             // Bottom
-            smvc.p0, smvc.p1, smvc.p2, smvc.p3,
+            _smvc.p0, _smvc.p1, _smvc.p2, _smvc.p3,
             // Left
-            smvc.p7, smvc.p4, smvc.p0, smvc.p3,
+            _smvc.p7, _smvc.p4, _smvc.p0, _smvc.p3,
             // Front
-            smvc.p4, smvc.p5, smvc.p1, smvc.p0,
+            _smvc.p4, _smvc.p5, _smvc.p1, _smvc.p0,
             // Back
-            smvc.p6, smvc.p7, smvc.p3, smvc.p2,
+            _smvc.p6, _smvc.p7, _smvc.p3, _smvc.p2,
             // Right
-            smvc.p5, smvc.p6, smvc.p2, smvc.p1,
+            _smvc.p5, _smvc.p6, _smvc.p2, _smvc.p1,
             // Top
-            smvc.p7, smvc.p6, smvc.p5, smvc.p4
+            _smvc.p7, _smvc.p6, _smvc.p5, _smvc.p4
         };
         _selectionMeshFilter.mesh.vertices = vertices;
+        Debug.Log(Vector3.Distance(_mousePosition1, Input.mousePosition) + " " + _mousePosition1 + " " + Input.mousePosition);
         _selectionMeshCollider.sharedMesh = _selectionMeshFilter.mesh;
     }
 
