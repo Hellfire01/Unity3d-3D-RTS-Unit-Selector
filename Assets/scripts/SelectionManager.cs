@@ -49,12 +49,15 @@ public class SelectionManager : MonoBehaviour {
         if (Input.GetMouseButtonUp(0)) {
             _selectionStarted = false;
         }
+        selectionMesh.SetActive(_selectionStarted);
         // Detect which Objects are inside selection rectangle
         if (_selectionStarted) {
             _selectedObjectsIndex.Clear();
             // get the rectangle of the player selection
             _selectionRect = _dsi.GetScreenSelectionRectangle(_mousePosition1, Input.mousePosition);
-            UpdateSelectionMeshValues();
+            if (Vector3.Distance(_mousePosition1, Input.mousePosition) > 5) {
+                UpdateSelectionMeshValues();
+            }
             for (int i = 0; i < selectables.Count; i++) {
                 _cameraBounds = GetViewportBounds(_mousePosition1, Input.mousePosition);
                 if (_cameraBounds.Contains(mainCamera.WorldToViewportPoint(selectables[i].transform.position))) {
