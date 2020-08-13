@@ -2333,6 +2333,7 @@ MonoBehaviour:
   renderers:
   - {fileID: 57717665}
   parent: {fileID: 57717663}
+  selectionManager: {fileID: 957566355}
 --- !u!136 &1833274126
 CapsuleCollider:
   m_ObjectHideFlags: 0

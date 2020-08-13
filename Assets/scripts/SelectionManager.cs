@@ -76,7 +76,7 @@ public class SelectionManager : MonoBehaviour {
                         addToSelection(selectable);
                     }
                 }
-                Debug.DrawRay(ray.origin, ray.direction * 1000f, Color.red);
+                // Debug.DrawRay(ray.origin, ray.direction * 1000f, Color.red);
             }
             for (int i = 0; i < selectables.Count; i++) {
                 _cameraBounds = GetViewportBounds(_mousePosition1, Input.mousePosition);
@@ -93,6 +93,23 @@ public class SelectionManager : MonoBehaviour {
     public void addToSelection(Selectable selectable) {
         if (_selectedObjects.Contains(selectable) == false) {
             _selectedObjects.Add(selectable);
+        }
+    }
+
+    // adds the selectable to the selectable list
+    public void addToSelectables(Selectable selectable) {
+        if (selectables.Contains(selectable) == false) {
+            selectables.Add(selectable);
+        }
+    }
+
+    // removes the unit from the selectables and ensures that the unit is no longer selected either
+    public void removeFromSelectables(Selectable selectable) {
+        if (selectables.Contains(selectable)) {
+            selectables.Remove(selectable);
+        }
+        if (_selectedObjects.Contains(selectable)) {
+            _selectedObjects.Remove(selectable);
         }
     }
     

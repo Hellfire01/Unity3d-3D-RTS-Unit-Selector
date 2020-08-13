@@ -5,6 +5,7 @@ using UnityEngine;
 public class Selectable : MonoBehaviour {
     public Renderer[] renderers; // Assign all child Mesh Renderers
     public GameObject parent;
+    public SelectionManager selectionManager;
     
     public Bounds GetObjectBounds() {
         Bounds totalBounds = new Bounds();
@@ -21,15 +22,11 @@ public class Selectable : MonoBehaviour {
 
     void OnEnable() {
         // Add this object to the selectable object list
-        if (!SelectionManager.selectables.Contains(this)) {
-            SelectionManager.selectables.Add(this);
-        }
+        selectionManager.addToSelectables(this);
     }
 
     void OnDisable() {
         // Remove this object from the selectable object list
-        if (SelectionManager.selectables.Contains(this)) {
-            SelectionManager.selectables.Remove(this);
-        }
+        selectionManager.removeFromSelectables(this);
     }
 }
