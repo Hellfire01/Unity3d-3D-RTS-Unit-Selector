@@ -5,7 +5,7 @@ using UnityEngine;
 public class Selectable : MonoBehaviour {
     public Renderer[] renderers; // Assign all child Mesh Renderers
     public GameObject parent;
-
+    
     public Bounds GetObjectBounds() {
         Bounds totalBounds = new Bounds();
 

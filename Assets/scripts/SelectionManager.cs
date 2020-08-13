@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 [RequireComponent(typeof(DrawSelectionIndicator))]
 public class SelectionManager : MonoBehaviour {
@@ -13,7 +15,7 @@ public class SelectionManager : MonoBehaviour {
     private DrawSelectionIndicator _dsi;
     private bool _selectionStarted;
     private Vector3 _mousePosition1;
-    private List<int> _selectedObjectsIndex;
+    private List<Selectable> _selectedObjects;
 
     // selection mesh
     private MeshFilter _selectionMeshFilter;
@@ -24,10 +26,11 @@ public class SelectionManager : MonoBehaviour {
     private Bounds _cameraBounds;
     private Rect _selectionRect;
     private GameObject _pointer;
-
+    
+    
     private void Start() {
         _selectionStarted = false;
-        _selectedObjectsIndex = new List<int>();
+        _selectedObjects = new List<Selectable>();
         _dsi = GetComponent<DrawSelectionIndicator>();
         _selectionMeshFilter = selectionMesh.GetComponent<MeshFilter>();
         _pointer = new GameObject();
@@ -56,7 +59,7 @@ public class SelectionManager : MonoBehaviour {
         }
         // Detect which Objects are inside selection rectangle
         if (_selectionStarted) {
-            _selectedObjectsIndex.Clear();
+            _selectedObjects.Clear();
             // get the rectangle of the player selection
             _selectionRect = _dsi.GetScreenSelectionRectangle(_mousePosition1, Input.mousePosition);
             // the selection mesh cannot be too thin as this causes an error with Unity ( the mesh is no longer considered convex )
@@ -65,12 +68,20 @@ public class SelectionManager : MonoBehaviour {
                 UpdateSelectionMeshValues();
             } else {
                 Vector3 middle = Vector3.Lerp(_mousePosition1, Input.mousePosition, 0.5f);
-                
+                Ray ray = mainCamera.ScreenPointToRay(middle);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, selectionLayers)) {
+                    Selectable selectable = hit.collider.gameObject.GetComponent<Selectable>();
+                    if (selectables.Contains(selectable)) { // makes sure the selectable is enabled and can be added to the selected list
+                        addToSelection(selectable);
+                    }
+                }
+                Debug.DrawRay(ray.origin, ray.direction * 1000f, Color.red);
             }
             for (int i = 0; i < selectables.Count; i++) {
                 _cameraBounds = GetViewportBounds(_mousePosition1, Input.mousePosition);
                 if (_cameraBounds.Contains(mainCamera.WorldToViewportPoint(selectables[i].transform.position))) {
-                    addToSelection(i);
+                    addToSelection(selectables[i]);
                 }
             }
         } else {
@@ -79,9 +90,9 @@ public class SelectionManager : MonoBehaviour {
     }
 
     // adds an element to the selection
-    public void addToSelection(int index) {
-        if (_selectedObjectsIndex.Contains(index) == false) {
-            _selectedObjectsIndex.Add(index);
+    public void addToSelection(Selectable selectable) {
+        if (_selectedObjects.Contains(selectable) == false) {
+            _selectedObjects.Add(selectable);
         }
     }
     
@@ -108,26 +119,15 @@ public class SelectionManager : MonoBehaviour {
         _selectionMeshCollider.sharedMesh = _selectionMeshFilter.mesh;
     }
 
-    private void OnDrawGizmos() {
-        // for (int i = 0; i < selectables.Count; i++) {
-        //     Gizmos.color = Color.red;
-        //     Bounds bounds = selectables[i].GetObjectBounds();
-        //     Gizmos.DrawCube(bounds.center, bounds.size);
-        // }
-        // Camera camera = Camera.main;
-        // Gizmos.color = Color.red;
-        // Gizmos.DrawCube(camera.WorldToViewportPoint(_cameraBounds.center), camera.WorldToViewportPoint(_cameraBounds.size));
-    }
-
     void OnGUI() {
         if (_selectionStarted) {
             // draw the player's selection rectangle
             _dsi.DrawScreenRectBorder(_selectionRect, 2, selectionColor);
         }
         // Draw selection edges
-        if (_selectedObjectsIndex.Count > 0) {
-            for (int i = 0; i < _selectedObjectsIndex.Count; i++) {
-                _dsi.DrawIndicator(mainCamera, selectables[_selectedObjectsIndex[i]].GetObjectBounds());
+        if (_selectedObjects.Count > 0) {
+            for (int i = 0; i < _selectedObjects.Count; i++) {
+                _dsi.DrawIndicator(mainCamera, _selectedObjects[i].GetObjectBounds());
             }
         }
     }
