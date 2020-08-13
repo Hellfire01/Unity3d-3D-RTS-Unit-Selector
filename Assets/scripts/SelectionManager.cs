@@ -5,7 +5,6 @@ using UnityEngine;
 public class SelectionManager : MonoBehaviour {
     public static List<Selectable> selectables = new List<Selectable>();
     public Color selectionColor;
-    public GameObject selectionMesh;
     public Camera mainCamera;
     public LayerMask selectionLayers;
     
@@ -15,6 +14,7 @@ public class SelectionManager : MonoBehaviour {
     private List<Selectable> _selectedObjects;
 
     // selection mesh
+    private GameObject _selectionMesh;
     private MeshFilter _selectionMeshFilter;
     private Rigidbody _selectionMeshRigidbody;
     private MeshCollider _selectionMeshCollider;
@@ -29,15 +29,22 @@ public class SelectionManager : MonoBehaviour {
         _selectionStarted = false;
         _selectedObjects = new List<Selectable>();
         _dsi = GetComponent<DrawSelectionIndicator>();
-        _selectionMeshFilter = selectionMesh.GetComponent<MeshFilter>();
         _pointer = new GameObject();
         _pointer.name = "pointer for unit selection";
-        _smvc = new SelectionMeshVerticesCalc(mainCamera, _pointer);
         // selection mesh
+        _selectionMesh = new GameObject();
+        _selectionMesh.name = "SelectionMesh";
+        _selectionMeshFilter = _selectionMesh.AddComponent<MeshFilter>();
+
+        // ============================ <DEBUG> ========================
+        _selectionMesh.AddComponent<MeshRenderer>();
+        // ============================ </DEBUG> =======================
+        
+        _smvc = new SelectionMeshVerticesCalc(mainCamera, _pointer);
         CreatePrimitiveMesh.GenerateBoxMesh(_selectionMeshFilter);
-        _selectionMeshRigidbody = selectionMesh.AddComponent<Rigidbody>();
+        _selectionMeshRigidbody = _selectionMesh.AddComponent<Rigidbody>();
         _selectionMeshRigidbody.useGravity = false;
-        _selectionMeshCollider = selectionMesh.AddComponent<MeshCollider>();
+        _selectionMeshCollider = _selectionMesh.AddComponent<MeshCollider>();
         _selectionMeshCollider.convex = true;
         _selectionMeshCollider.isTrigger = true;
         _selectionMeshCollider.sharedMesh = _selectionMeshFilter.mesh;
@@ -61,7 +68,7 @@ public class SelectionManager : MonoBehaviour {
             _selectionRect = _dsi.GetScreenSelectionRectangle(_mousePosition1, Input.mousePosition);
             // the selection mesh cannot be too thin as this causes an error with Unity ( the mesh is no longer considered convex )
             if (Vector3.Distance(_mousePosition1, Input.mousePosition) > 5 && _mousePosition1.x != Input.mousePosition.x && _mousePosition1.y != Input.mousePosition.y) {
-                selectionMesh.SetActive(true);
+                _selectionMesh.SetActive(true);
                 UpdateSelectionMeshValues();
             } else {
                 Vector3 middle = Vector3.Lerp(_mousePosition1, Input.mousePosition, 0.5f);
@@ -82,7 +89,7 @@ public class SelectionManager : MonoBehaviour {
                 }
             }
         } else {
-            selectionMesh.SetActive(false);
+            _selectionMesh.SetActive(false);
         }
     }
 
