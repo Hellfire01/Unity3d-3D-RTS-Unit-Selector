@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 [RequireComponent(typeof(DrawSelectionIndicator))]
 public class SelectionManager : MonoBehaviour {
@@ -73,7 +70,7 @@ public class SelectionManager : MonoBehaviour {
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, selectionLayers)) {
                     Selectable selectable = hit.collider.gameObject.GetComponent<Selectable>();
                     if (selectables.Contains(selectable)) { // makes sure the selectable is enabled and can be added to the selected list
-                        addToSelection(selectable);
+                        addSelectableToUserSelection(selectable);
                     }
                 }
                 // Debug.DrawRay(ray.origin, ray.direction * 1000f, Color.red);
@@ -81,7 +78,7 @@ public class SelectionManager : MonoBehaviour {
             for (int i = 0; i < selectables.Count; i++) {
                 _cameraBounds = GetViewportBounds(_mousePosition1, Input.mousePosition);
                 if (_cameraBounds.Contains(mainCamera.WorldToViewportPoint(selectables[i].transform.position))) {
-                    addToSelection(selectables[i]);
+                    addSelectableToUserSelection(selectables[i]);
                 }
             }
         } else {
@@ -90,7 +87,7 @@ public class SelectionManager : MonoBehaviour {
     }
 
     // adds an element to the selection
-    public void addToSelection(Selectable selectable) {
+    public void addSelectableToUserSelection(Selectable selectable) {
         if (_selectedObjects.Contains(selectable) == false) {
             _selectedObjects.Add(selectable);
         }
