@@ -34,6 +34,8 @@ public class SelectionManager : MonoBehaviour {
         // selection mesh
         _selectionMesh = new GameObject();
         _selectionMesh.name = "SelectionMesh";
+        SelectionMeshCollider smc = _selectionMesh.AddComponent<SelectionMeshCollider>();
+        smc.selectionManager = this;
         _selectionMeshFilter = _selectionMesh.AddComponent<MeshFilter>();
 
         // ============================ <DEBUG> ========================

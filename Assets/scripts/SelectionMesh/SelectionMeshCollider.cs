@@ -2,6 +2,8 @@
 using UnityEngine;
 
 public class SelectionMeshCollider : MonoBehaviour {
+    public SelectionManager selectionManager;
+    
     void Start() {
         
     }
