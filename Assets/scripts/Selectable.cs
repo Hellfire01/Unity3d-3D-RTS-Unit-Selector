@@ -7,7 +7,6 @@ public class Selectable : MonoBehaviour {
     
     public Bounds GetObjectBounds() {
         Bounds totalBounds = new Bounds();
-
         for (int i = 0; i < renderers.Length; i++) {
             if (totalBounds.center == Vector3.zero) {
                 totalBounds = renderers[i].bounds;

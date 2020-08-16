@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 
 [RequireComponent(typeof(DrawSelectionIndicator))]
@@ -6,7 +7,9 @@ public class SelectionManager : MonoBehaviour {
     public static List<Selectable> selectables = new List<Selectable>();
     public Color selectionColor;
     public Camera mainCamera;
-    public LayerMask selectionLayers;
+    [Header("select one layer only")]
+    [Tooltip("select one only. If multiple are selected, only the last one will be used")]
+    public LayerMask selectionLayer;
     
     private DrawSelectionIndicator _dsi;
     private bool _selectionStarted;
@@ -34,6 +37,7 @@ public class SelectionManager : MonoBehaviour {
         // selection mesh
         _selectionMesh = new GameObject();
         _selectionMesh.name = "SelectionMesh";
+        _selectionMesh.layer = (int)Mathf.Log(selectionLayer.value, 2);
         SelectionMeshCollider smc = _selectionMesh.AddComponent<SelectionMeshCollider>();
         smc.selectionManager = this;
         _selectionMeshFilter = _selectionMesh.AddComponent<MeshFilter>();
@@ -76,7 +80,7 @@ public class SelectionManager : MonoBehaviour {
                 Vector3 middle = Vector3.Lerp(_mousePosition1, Input.mousePosition, 0.5f);
                 Ray ray = mainCamera.ScreenPointToRay(middle);
                 RaycastHit hit;
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, selectionLayers)) {
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, selectionLayer)) {
                     Selectable selectable = hit.collider.gameObject.GetComponent<Selectable>();
                     if (selectables.Contains(selectable)) { // makes sure the selectable is enabled and can be added to the selected list
                         addSelectableToUserSelection(selectable);

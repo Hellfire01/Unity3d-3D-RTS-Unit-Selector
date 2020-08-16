@@ -1499,7 +1499,7 @@ GameObject:
   - component: {fileID: 957566353}
   - component: {fileID: 957566355}
   m_Layer: 0
-  m_Name: UnitMovementController
+  m_Name: SelectionManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1551,7 +1551,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectionColor: {r: 0, g: 1, b: 0.95833325, a: 1}
   mainCamera: {fileID: 534669904}
-  selectionLayers:
+  selectionLayer:
     serializedVersion: 2
     m_Bits: 1024
 --- !u!1 &979801177
