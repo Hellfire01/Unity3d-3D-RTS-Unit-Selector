@@ -13,14 +13,10 @@ public class SelectionMeshCollider : MonoBehaviour {
     }
 
     private void OnTriggerEnter(Collider other) {
-        
-    }
-
-    private void OnTriggerExit(Collider other) {
-        
+        selectionManager.addSelectableToUserSelection(other.gameObject.GetComponent<Selectable>());
     }
 
     private void OnTriggerStay(Collider other) {
-        
+        selectionManager.addSelectableToUserSelection(other.gameObject.GetComponent<Selectable>());
     }
 }

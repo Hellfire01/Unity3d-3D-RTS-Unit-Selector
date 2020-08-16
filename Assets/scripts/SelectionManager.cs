@@ -82,7 +82,7 @@ public class SelectionManager : MonoBehaviour {
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, selectionLayer)) {
                     Selectable selectable = hit.collider.gameObject.GetComponent<Selectable>();
-                    if (selectables.Contains(selectable)) { // makes sure the selectable is enabled and can be added to the selected list
+                    if (selectables.Contains(selectable)) { // makes sure the selectable is enabled and can be added to the selected listl
                         addSelectableToUserSelection(selectable);
                     }
                 }
