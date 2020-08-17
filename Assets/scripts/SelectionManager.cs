@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
 
@@ -14,6 +15,8 @@ public class SelectionManager : MonoBehaviour {
     private DrawSelectionIndicator _dsi;
     private bool _selectionStarted;
     private Vector3 _mousePosition1;
+    private List<Selectable> _selectedObjectsByClickDrag;
+    private List<Selectable> _selectedObjectsByMeshCollider;
     private List<Selectable> _selectedObjects;
 
     // selection mesh
@@ -26,10 +29,11 @@ public class SelectionManager : MonoBehaviour {
     private Bounds _cameraBounds;
     private Rect _selectionRect;
     private GameObject _pointer;
-    
-    
+
     private void Start() {
         _selectionStarted = false;
+        _selectedObjectsByClickDrag = new List<Selectable>();
+        _selectedObjectsByMeshCollider = new List<Selectable>();
         _selectedObjects = new List<Selectable>();
         _dsi = GetComponent<DrawSelectionIndicator>();
         _pointer = new GameObject();
@@ -41,11 +45,6 @@ public class SelectionManager : MonoBehaviour {
         SelectionMeshCollider smc = _selectionMesh.AddComponent<SelectionMeshCollider>();
         smc.selectionManager = this;
         _selectionMeshFilter = _selectionMesh.AddComponent<MeshFilter>();
-
-        // ============================ <DEBUG> ========================
-        _selectionMesh.AddComponent<MeshRenderer>();
-        // ============================ </DEBUG> =======================
-        
         _smvc = new SelectionMeshVerticesCalc(mainCamera, _pointer);
         CreatePrimitiveMesh.GenerateBoxMesh(_selectionMeshFilter);
         _selectionMeshRigidbody = _selectionMesh.AddComponent<Rigidbody>();
@@ -55,8 +54,14 @@ public class SelectionManager : MonoBehaviour {
         _selectionMeshCollider.isTrigger = true;
         _selectionMeshCollider.sharedMesh = _selectionMeshFilter.mesh;
     }
-    
-    // Update is called once per frame
+
+    private void FixedUpdate() {
+        // the list is emptied before the triggers are called again
+        if (_selectionStarted) {
+            _selectedObjectsByMeshCollider.Clear();
+        }
+    }
+
     void Update() {
         // Begin selection
         if (Input.GetMouseButtonDown(0)) {
@@ -70,6 +75,7 @@ public class SelectionManager : MonoBehaviour {
         // Detect which Objects are inside selection rectangle
         if (_selectionStarted) {
             _selectedObjects.Clear();
+            _selectedObjectsByClickDrag.Clear();
             // get the rectangle of the player selection
             _selectionRect = _dsi.GetScreenSelectionRectangle(_mousePosition1, Input.mousePosition);
             // the selection mesh cannot be too thin as this causes an error with Unity ( the mesh is no longer considered convex )
@@ -82,16 +88,19 @@ public class SelectionManager : MonoBehaviour {
                 RaycastHit hit;
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, selectionLayer)) {
                     Selectable selectable = hit.collider.gameObject.GetComponent<Selectable>();
-                    if (selectables.Contains(selectable)) { // makes sure the selectable is enabled and can be added to the selected listl
-                        addSelectableToUserSelection(selectable);
-                    }
+                    addAsSelectedByClickDrag(selectable);
                 }
-                // Debug.DrawRay(ray.origin, ray.direction * 1000f, Color.red);
             }
             for (int i = 0; i < selectables.Count; i++) {
                 _cameraBounds = GetViewportBounds(_mousePosition1, Input.mousePosition);
                 if (_cameraBounds.Contains(mainCamera.WorldToViewportPoint(selectables[i].transform.position))) {
-                    addSelectableToUserSelection(selectables[i]);
+                    addAsSelectedByClickDrag(selectables[i]);
+                }
+            }
+            _selectedObjects = new List<Selectable>(_selectedObjectsByClickDrag);
+            for (int i = 0; i < _selectedObjectsByMeshCollider.Count; i++) {
+                if (_selectedObjects.Contains(_selectedObjectsByMeshCollider[i]) == false) {
+                    _selectedObjects.Add(_selectedObjectsByMeshCollider[i]);
                 }
             }
         } else {
@@ -100,14 +109,21 @@ public class SelectionManager : MonoBehaviour {
     }
 
     // adds an element to the selection
-    public void addSelectableToUserSelection(Selectable selectable) {
-        if (_selectedObjects.Contains(selectable) == false) {
-            _selectedObjects.Add(selectable);
+    public void addAsSelectedByClickDrag(Selectable selectable) {
+        if (selectables.Contains(selectable) && _selectedObjectsByClickDrag.Contains(selectable) == false) {
+            _selectedObjectsByClickDrag.Add(selectable);
+        }
+    }
+    
+    // adds an element to the selection
+    public void addAsSelectedByUserByMeshCollider(Selectable selectable) {
+        if (selectables.Contains(selectable) && _selectedObjectsByMeshCollider.Contains(selectable) == false) {
+            _selectedObjectsByMeshCollider.Add(selectable);
         }
     }
 
     // adds the selectable to the selectable list
-    public void addToSelectables(Selectable selectable) {
+    public void addAsSelectable(Selectable selectable) {
         if (selectables.Contains(selectable) == false) {
             selectables.Add(selectable);
         }
@@ -115,12 +131,9 @@ public class SelectionManager : MonoBehaviour {
 
     // removes the unit from the selectables and ensures that the unit is no longer selected either
     public void removeFromSelectables(Selectable selectable) {
-        if (selectables.Contains(selectable)) {
-            selectables.Remove(selectable);
-        }
-        if (_selectedObjects.Contains(selectable)) {
-            _selectedObjects.Remove(selectable);
-        }
+        selectables.Remove(selectable);
+        _selectedObjectsByClickDrag.Remove(selectable);
+        _selectedObjectsByMeshCollider.Remove(selectable);
     }
     
     // update the position of the vertices of the selection mesh according to the user's mouse position on screen
@@ -152,10 +165,8 @@ public class SelectionManager : MonoBehaviour {
             _dsi.DrawScreenRectBorder(_selectionRect, 2, selectionColor);
         }
         // Draw selection edges
-        if (_selectedObjects.Count > 0) {
-            for (int i = 0; i < _selectedObjects.Count; i++) {
-                _dsi.DrawIndicator(mainCamera, _selectedObjects[i].GetObjectBounds());
-            }
+        for (int i = 0; i < _selectedObjects.Count; i++) {
+            _dsi.DrawIndicator(mainCamera, _selectedObjects[i].GetObjectBounds());
         }
     }
 

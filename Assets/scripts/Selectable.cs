@@ -19,7 +19,7 @@ public class Selectable : MonoBehaviour {
 
     void OnEnable() {
         // Add this object to the selectable object list
-        selectionManager.addToSelectables(this);
+        selectionManager.addAsSelectable(this);
     }
 
     void OnDisable() {
