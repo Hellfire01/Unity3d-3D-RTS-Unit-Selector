@@ -77,15 +77,14 @@ public class SelectionManager : MonoBehaviour {
         if (Input.GetMouseButtonUp(0)) {
             _selectionStarted = false;
         }
-        // Detect which Objects are inside selection rectangle
         if (_selectionStarted) {
             _selectedObjects.Clear();
             _selectedObjectsByClickDrag.Clear();
-            // get the rectangle of the player selection
             _selectionRect = _dsi.GetScreenSelectionRectangle(_mousePosition1, Input.mousePosition);
             // the selection mesh cannot be too thin as this causes an error with Unity ( the mesh is no longer considered convex )
             if (Vector3.Distance(_mousePosition1, Input.mousePosition) > 5 && _mousePosition1.x != Input.mousePosition.x && _mousePosition1.y != Input.mousePosition.y) {
-                if (Input.mousePosition != _previousMousePosition) { // do not recalculate mesh of the Input.mousePosition did not change
+                // do not recalculate mesh if the Input.mousePosition did not change
+                if (Input.mousePosition != _previousMousePosition) {
                     _selectionMesh.SetActive(true);
                     UpdateSelectionMeshValues();
                 }
