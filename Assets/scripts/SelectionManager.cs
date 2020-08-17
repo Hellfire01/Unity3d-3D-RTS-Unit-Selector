@@ -15,6 +15,7 @@ public class SelectionManager : MonoBehaviour {
     private DrawSelectionIndicator _dsi;
     private bool _selectionStarted;
     private Vector3 _mousePosition1;
+    private Vector3 _previousMousePosition;
     private List<Selectable> _selectedObjectsByClickDrag;
     private List<Selectable> _selectedObjectsByMeshCollider;
     private List<Selectable> _selectedObjects;
@@ -38,6 +39,9 @@ public class SelectionManager : MonoBehaviour {
         _dsi = GetComponent<DrawSelectionIndicator>();
         _pointer = new GameObject();
         _pointer.name = "pointer for unit selection";
+        // mouse position
+        _mousePosition1 = Input.mousePosition;
+        _previousMousePosition = Input.mousePosition;
         // selection mesh
         _selectionMesh = new GameObject();
         _selectionMesh.name = "SelectionMesh";
@@ -67,6 +71,7 @@ public class SelectionManager : MonoBehaviour {
         if (Input.GetMouseButtonDown(0)) {
             _selectionStarted = true;
             _mousePosition1 = Input.mousePosition;
+            _previousMousePosition = Input.mousePosition;
         }
         // End selection
         if (Input.GetMouseButtonUp(0)) {
@@ -80,8 +85,10 @@ public class SelectionManager : MonoBehaviour {
             _selectionRect = _dsi.GetScreenSelectionRectangle(_mousePosition1, Input.mousePosition);
             // the selection mesh cannot be too thin as this causes an error with Unity ( the mesh is no longer considered convex )
             if (Vector3.Distance(_mousePosition1, Input.mousePosition) > 5 && _mousePosition1.x != Input.mousePosition.x && _mousePosition1.y != Input.mousePosition.y) {
-                _selectionMesh.SetActive(true);
-                UpdateSelectionMeshValues();
+                if (Input.mousePosition != _previousMousePosition) { // do not recalculate mesh of the Input.mousePosition did not change
+                    _selectionMesh.SetActive(true);
+                    UpdateSelectionMeshValues();
+                }
             } else {
                 Vector3 middle = Vector3.Lerp(_mousePosition1, Input.mousePosition, 0.5f);
                 Ray ray = mainCamera.ScreenPointToRay(middle);
@@ -103,6 +110,7 @@ public class SelectionManager : MonoBehaviour {
                     _selectedObjects.Add(_selectedObjectsByMeshCollider[i]);
                 }
             }
+            _previousMousePosition = Input.mousePosition;
         } else {
             _selectionMesh.SetActive(false);
         }
