@@ -19,19 +19,13 @@ public class DrawSelectionIndicator : MonoBehaviour {
         _borderTexture.Apply();
     }
 
-    // draws the player's selection rectangle
+    // draws the player's selection on screen
     public void DrawScreenRectBorder(Rect rect, float thickness, Color color) {
-        DrawBorderRect(new Rect(rect.xMin, rect.yMin, rect.width, thickness), color); // Top
-        DrawBorderRect(new Rect(rect.xMin, rect.yMin, thickness, rect.height), color); // Left
-        DrawBorderRect(new Rect(rect.xMax - thickness, rect.yMin, thickness, rect.height), color); // Right
-        DrawBorderRect(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), color); // bottom
-    }
-
-    // draws the player's selection rectangle
-    // called by DrawScreenRectBorder
-    void DrawBorderRect(Rect rect, Color color) {
         GUI.color = color;
-        GUI.DrawTexture(rect, _borderTexture);
+        GUI.DrawTexture(new Rect(rect.xMin, rect.yMin, rect.width, thickness), _borderTexture);
+        GUI.DrawTexture(new Rect(rect.xMin, rect.yMin, thickness, rect.height), _borderTexture);
+        GUI.DrawTexture(new Rect(rect.xMax - thickness, rect.yMin, thickness, rect.height), _borderTexture);
+        GUI.DrawTexture(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), _borderTexture);
         GUI.color = Color.white;
     }
 

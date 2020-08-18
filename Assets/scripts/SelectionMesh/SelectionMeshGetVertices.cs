@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class SelectionMeshVerticesCalc {
+public class SelectionMeshGetVertices {
     public Vector2 p0Ratio;
     public Vector2 p1Ratio;
     public Vector2 p2Ratio;
@@ -20,12 +19,12 @@ public class SelectionMeshVerticesCalc {
     private Rect _selectionRect;
     private GameObject _pointer;
     
-    public SelectionMeshVerticesCalc(Camera mainCamera, GameObject pointer) {
+    public SelectionMeshGetVertices(Camera mainCamera, GameObject pointer) {
         _mainCamera = mainCamera;
         _pointer = pointer;
     }
 
-    // gets all of the vertices positions
+    // gets all of the vertices of the selection mesh in the word space
     public void calc(Rect selectionRectangle) {
         _selectionRect = selectionRectangle;
         getRatios();
@@ -47,7 +46,6 @@ public class SelectionMeshVerticesCalc {
         // bottom right
         p3Ratio = new Vector2(_selectionRect.xMax / Screen.width,
                               1 - _selectionRect.yMax / Screen.height);
-        // Debug.Log(p0Ratio + ", " + p1Ratio + ", " + p2Ratio + ", " + p3Ratio);
     }
 
     // apply selection rectangle on given clip plane
@@ -57,7 +55,7 @@ public class SelectionMeshVerticesCalc {
         float planeWidth = Vector3.Distance(ncpp.LowerLeft, ncpp.LowerRight);
         float planeHeight = Vector3.Distance(ncpp.UpperRight, ncpp.LowerRight);
         _pointer.transform.eulerAngles = _mainCamera.transform.eulerAngles;
-        // p0 / p4 / top left
+        // p0 / p4
         _pointer.transform.position = ncpp.LowerLeft;
         _pointer.transform.Translate(planeWidth * p2Ratio.x, planeHeight * p2Ratio.y, 0);
         pA = _pointer.transform.position;

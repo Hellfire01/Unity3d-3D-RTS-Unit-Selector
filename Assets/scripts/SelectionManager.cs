@@ -5,17 +5,31 @@ using UnityEngine;
 
 [RequireComponent(typeof(DrawSelectionIndicator))]
 public class SelectionManager : MonoBehaviour {
+    [Tooltip("this array containes all of the Selectables selected by the user")]
     public static List<Selectable> selectables = new List<Selectable>();
+    [Tooltip("This is the color that is used for the user's selection")]
     public Color selectionColor;
+    [Tooltip("Reference to the main camera. Needed to avoid calling Camera.main each frame")]
     public Camera mainCamera;
-    [Header("select one layer only")]
-    [Tooltip("select one only. If multiple are selected, only the last one will be used")]
+    [Tooltip("The selection layer of the Selectable game objects. If multiple are selected, only the last one will be used")]
     public LayerMask selectionLayer;
     
-    private DrawSelectionIndicator _dsi;
+    
     private bool _selectionStarted;
+
+    // mouse related
     private Vector3 _mousePosition1;
     private Vector3 _previousMousePosition;
+    
+    // draw related
+    private DrawSelectionIndicator _dsi;
+    private SelectionMeshGetVertices _smvc;
+    
+    // user selection
+    private Bounds _cameraBounds;
+    private Rect _selectionRect;
+    
+    // selection lists
     private List<Selectable> _selectedObjectsByClickDrag;
     private List<Selectable> _selectedObjectsByMeshCollider;
     private List<Selectable> _selectedObjects;
@@ -26,19 +40,17 @@ public class SelectionManager : MonoBehaviour {
     private Rigidbody _selectionMeshRigidbody;
     private MeshCollider _selectionMeshCollider;
 
-    private SelectionMeshVerticesCalc _smvc;
-    private Bounds _cameraBounds;
-    private Rect _selectionRect;
     private GameObject _pointer;
 
     private void Start() {
         _selectionStarted = false;
-        _selectedObjectsByClickDrag = new List<Selectable>();
-        _selectedObjectsByMeshCollider = new List<Selectable>();
-        _selectedObjects = new List<Selectable>();
         _dsi = GetComponent<DrawSelectionIndicator>();
         _pointer = new GameObject();
         _pointer.name = "pointer for unit selection";
+        // selection arrays
+        _selectedObjectsByClickDrag = new List<Selectable>();
+        _selectedObjectsByMeshCollider = new List<Selectable>();
+        _selectedObjects = new List<Selectable>();
         // mouse position
         _mousePosition1 = Input.mousePosition;
         _previousMousePosition = Input.mousePosition;
@@ -49,7 +61,7 @@ public class SelectionManager : MonoBehaviour {
         SelectionMeshCollider smc = _selectionMesh.AddComponent<SelectionMeshCollider>();
         smc.selectionManager = this;
         _selectionMeshFilter = _selectionMesh.AddComponent<MeshFilter>();
-        _smvc = new SelectionMeshVerticesCalc(mainCamera, _pointer);
+        _smvc = new SelectionMeshGetVertices(mainCamera, _pointer);
         CreatePrimitiveMesh.GenerateBoxMesh(_selectionMeshFilter);
         _selectionMeshRigidbody = _selectionMesh.AddComponent<Rigidbody>();
         _selectionMeshRigidbody.useGravity = false;
