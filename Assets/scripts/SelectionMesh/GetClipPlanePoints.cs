@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public static class GetClipPlanePoints {
-    public struct ClipPlanePoints {
+    public class ClipPlanePoints {
         public Vector3 UpperLeft;
         public Vector3 UpperRight;
         public Vector3 LowerLeft;
@@ -21,27 +21,30 @@ public static class GetClipPlanePoints {
         Transform cameraTransform = mainCamera.transform;
         Vector3 pos = cameraTransform.position;
         float halfFOV = (mainCamera.fieldOfView * 0.5f) * Mathf.Deg2Rad;
-        float aspect = mainCamera.aspect;
         float height = Mathf.Tan(halfFOV) * distance;
-        float width = height * aspect;
+        float width = height * mainCamera.aspect;
 
-        // lower right
-        clipPlanePoints.LowerRight = pos + cameraTransform.forward * distance;
-        clipPlanePoints.LowerRight += cameraTransform.right * width;
-        clipPlanePoints.LowerRight -= cameraTransform.up * height;
-        // lower left
-        clipPlanePoints.LowerLeft = pos + cameraTransform.forward * distance;
-        clipPlanePoints.LowerLeft -= cameraTransform.right * width;
-        clipPlanePoints.LowerLeft -= cameraTransform.up * height;
-        // upper right
-        clipPlanePoints.UpperRight = pos + cameraTransform.forward * distance;
-        clipPlanePoints.UpperRight += cameraTransform.right * width;
-        clipPlanePoints.UpperRight += cameraTransform.up * height;
-        // upper left
-        clipPlanePoints.UpperLeft = pos + cameraTransform.forward * distance;
-        clipPlanePoints.UpperLeft -= cameraTransform.right * width;
-        clipPlanePoints.UpperLeft += cameraTransform.up * height;
+        Vector3 pcfd = pos + cameraTransform.forward * distance;
+        Vector3 crw = cameraTransform.right * width;
+        Vector3 cth = cameraTransform.up * height;
         
+        // lower right
+        clipPlanePoints.LowerRight = pcfd;
+        clipPlanePoints.LowerRight += crw;
+        clipPlanePoints.LowerRight -= cth;
+        // lower left
+        clipPlanePoints.LowerLeft = pcfd;
+        clipPlanePoints.LowerLeft -= crw;
+        clipPlanePoints.LowerLeft -= cth;
+        // upper right
+        clipPlanePoints.UpperRight = pcfd;
+        clipPlanePoints.UpperRight += crw;
+        clipPlanePoints.UpperRight += cth;
+        // upper left
+        clipPlanePoints.UpperLeft = pcfd;
+        clipPlanePoints.UpperLeft -= crw;
+        clipPlanePoints.UpperLeft += cth;
+
         return clipPlanePoints;
     }
 }
