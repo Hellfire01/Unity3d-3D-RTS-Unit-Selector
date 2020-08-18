@@ -66,7 +66,6 @@ public class DrawSelectionIndicator : MonoBehaviour {
         Vector2 topRightPosition = Vector2.zero;
         Vector2 bottomLeftPosition = Vector2.zero;
         Vector2 bottomRightPosition = Vector2.zero;
-
         for (int a = 0; a < screenPoints.Length; a++) {
             // Top left texture
             if (topLeftPosition.x == 0 || topLeftPosition.x > screenPoints[a].x) {

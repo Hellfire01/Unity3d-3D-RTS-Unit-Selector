@@ -13,7 +13,10 @@ public class SelectionManager : MonoBehaviour {
     public Camera mainCamera;
     [Tooltip("The selection layer of the Selectable game objects. If multiple are selected, only the last one will be used")]
     public LayerMask selectionLayer;
-    
+    [Tooltip("This is the key that is used for cumulating multiple selections ( left + right shift by default in most RTS )")]
+    public KeyCode multipleSelectionKey = KeyCode.LeftShift;
+    [Tooltip("This is the second key that is used for cumulating multiple selections ( left + right shift by default in most RTS )")]
+    public KeyCode multipleSelectionKey2 = KeyCode.RightShift;
     
     private bool _selectionStarted;
 
@@ -39,7 +42,6 @@ public class SelectionManager : MonoBehaviour {
     private MeshFilter _selectionMeshFilter;
     private Rigidbody _selectionMeshRigidbody;
     private MeshCollider _selectionMeshCollider;
-
     private GameObject _pointer;
 
     private void Start() {
@@ -58,6 +60,7 @@ public class SelectionManager : MonoBehaviour {
         _selectionMesh = new GameObject();
         _selectionMesh.name = "SelectionMesh";
         _selectionMesh.layer = (int)Mathf.Log(selectionLayer.value, 2);
+        _selectionMesh.transform.position = new Vector3(0, -float.MinValue + 1, 0); // placing the mesh collider very far down to avoid unwanted collisions on the first physics frame
         SelectionMeshCollider smc = _selectionMesh.AddComponent<SelectionMeshCollider>();
         smc.selectionManager = this;
         _selectionMeshFilter = _selectionMesh.AddComponent<MeshFilter>();
@@ -90,7 +93,9 @@ public class SelectionManager : MonoBehaviour {
             _selectionStarted = false;
         }
         if (_selectionStarted) {
-            _selectedObjects.Clear();
+            if ((Input.GetKey(multipleSelectionKey) || Input.GetKey(multipleSelectionKey2)) == false) {
+                _selectedObjects.Clear();
+            }
             _selectedObjectsByClickDrag.Clear();
             _selectionRect = _dsi.GetScreenSelectionRectangle(_mousePosition1, Input.mousePosition);
             calculateSelectablesByMeshOrRaycast();
@@ -100,12 +105,8 @@ public class SelectionManager : MonoBehaviour {
                     addAsSelectedByClickDrag(selectables[i]);
                 }
             }
-            _selectedObjects = new List<Selectable>(_selectedObjectsByClickDrag);
-            for (int i = 0; i < _selectedObjectsByMeshCollider.Count; i++) {
-                if (_selectedObjects.Contains(_selectedObjectsByMeshCollider[i]) == false) {
-                    _selectedObjects.Add(_selectedObjectsByMeshCollider[i]);
-                }
-            }
+            addArrayToSelectedByUSer(_selectedObjectsByClickDrag);
+            addArrayToSelectedByUSer(_selectedObjectsByMeshCollider);
             _previousMousePosition = Input.mousePosition;
         } else {
             _selectionMesh.SetActive(false);
@@ -138,7 +139,21 @@ public class SelectionManager : MonoBehaviour {
             _selectedObjectsByMeshCollider.Add(selectable);
         }
     }
-
+    
+    // adds a selectable selected by the user to the selection array
+    public void addToSelectedByUSer(Selectable selectable) {
+        if (_selectedObjects.Contains(selectable) == false) {
+            _selectedObjects.Add(selectable);
+        }
+    }
+    
+    // adds an array of selectables selected by the user to the selection array
+    public void addArrayToSelectedByUSer(List<Selectable> selectables) {
+        foreach (Selectable selectable in selectables) {
+            addToSelectedByUSer(selectable);
+        }
+    }
+    
     // adds the selectable to the selectable list
     public void addAsSelectable(Selectable selectable) {
         if (selectables.Contains(selectable) == false) {
