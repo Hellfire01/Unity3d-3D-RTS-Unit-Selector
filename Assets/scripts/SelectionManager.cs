@@ -81,24 +81,9 @@ public class SelectionManager : MonoBehaviour {
             _selectedObjects.Clear();
             _selectedObjectsByClickDrag.Clear();
             _selectionRect = _dsi.GetScreenSelectionRectangle(_mousePosition1, Input.mousePosition);
-            // the selection mesh cannot be too thin as this causes an error with Unity ( the mesh is no longer considered convex )
-            if (Vector3.Distance(_mousePosition1, Input.mousePosition) > 5 && _mousePosition1.x != Input.mousePosition.x && _mousePosition1.y != Input.mousePosition.y) {
-                // do not recalculate mesh if the Input.mousePosition did not change
-                if (Input.mousePosition != _previousMousePosition) {
-                    _selectionMesh.SetActive(true);
-                    UpdateSelectionMeshValues();
-                }
-            } else {
-                Vector3 middle = Vector3.Lerp(_mousePosition1, Input.mousePosition, 0.5f);
-                Ray ray = mainCamera.ScreenPointToRay(middle);
-                RaycastHit hit;
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, selectionLayer)) {
-                    Selectable selectable = hit.collider.gameObject.GetComponent<Selectable>();
-                    addAsSelectedByClickDrag(selectable);
-                }
-            }
+            calculateSelectablesByMeshOrRaycast();
+            _cameraBounds = GetViewportBounds(_mousePosition1, Input.mousePosition);
             for (int i = 0; i < selectables.Count; i++) {
-                _cameraBounds = GetViewportBounds(_mousePosition1, Input.mousePosition);
                 if (_cameraBounds.Contains(mainCamera.WorldToViewportPoint(selectables[i].transform.position))) {
                     addAsSelectedByClickDrag(selectables[i]);
                 }
@@ -114,6 +99,19 @@ public class SelectionManager : MonoBehaviour {
             _selectionMesh.SetActive(false);
         }
     }
+
+    void OnGUI() {
+        if (_selectionStarted) {
+            // draw the player's selection rectangle
+            _dsi.DrawScreenRectBorder(_selectionRect, 2, selectionColor);
+        }
+        // Draw selection edges
+        for (int i = 0; i < _selectedObjects.Count; i++) {
+            _dsi.DrawIndicator(mainCamera, _selectedObjects[i].GetObjectBounds());
+        }
+    }
+
+    #region add and remove from selection
 
     // adds an element to the selection
     public void addAsSelectedByClickDrag(Selectable selectable) {
@@ -143,6 +141,36 @@ public class SelectionManager : MonoBehaviour {
         _selectedObjectsByMeshCollider.Remove(selectable);
     }
     
+    #endregion
+
+    #region calculate selectables by raycast or mesh collision
+
+    private void calculateSelectablesByMeshOrRaycast() {
+        // should the user's selection be too small or thin, the shape of the mesh is no lon ger convex and this causes
+        //     an error. In this instance, a raycast is used instead. This allows a normal selection without the user
+        //     noticing the difference
+        // Note : normally comparing floats directly is a bad practice due to precision loss but in this case, the mesh
+        //     has an error only if the values are exactly the same ( the cube becomes a plane ). This is a very very rare case
+        if (Vector3.Distance(_mousePosition1, Input.mousePosition) > 5
+            && _mousePosition1.x != Input.mousePosition.x
+            && _mousePosition1.y != Input.mousePosition.y) {
+            // do not recalculate mesh if the Input.mousePosition did not change
+            if (Input.mousePosition != _previousMousePosition) {
+                _selectionMesh.SetActive(true);
+                UpdateSelectionMeshValues();
+            }
+        } else {
+            // the raycast is set at the center of the user's selection
+            Vector3 middle = Vector3.Lerp(_mousePosition1, Input.mousePosition, 0.5f);
+            Ray ray = mainCamera.ScreenPointToRay(middle);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, selectionLayer)) {
+                Selectable selectable = hit.collider.gameObject.GetComponent<Selectable>();
+                addAsSelectedByClickDrag(selectable);
+            }
+        }
+    }
+
     // update the position of the vertices of the selection mesh according to the user's mouse position on screen
     private void UpdateSelectionMeshValues() {
         _smvc.calc(_selectionRect);
@@ -166,17 +194,8 @@ public class SelectionManager : MonoBehaviour {
         _selectionMeshCollider.sharedMesh = _selectionMeshFilter.mesh;
     }
 
-    void OnGUI() {
-        if (_selectionStarted) {
-            // draw the player's selection rectangle
-            _dsi.DrawScreenRectBorder(_selectionRect, 2, selectionColor);
-        }
-        // Draw selection edges
-        for (int i = 0; i < _selectedObjects.Count; i++) {
-            _dsi.DrawIndicator(mainCamera, _selectedObjects[i].GetObjectBounds());
-        }
-    }
-
+    #endregion
+    
     // Defines a volume such as seen by the camera and delimited by the player
     public Bounds GetViewportBounds(Vector3 screenPosition1, Vector3 screenPosition2) {
         Vector3 v1 = mainCamera.ScreenToViewportPoint(screenPosition1);
